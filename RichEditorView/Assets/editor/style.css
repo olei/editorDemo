@@ -49,8 +49,24 @@ img{
     overflow: auto;
 }
 
-#editor:focus {
+#editor:focus, #title:focus {
     outline: 0px solid transparent;
+}
+
+#title {
+    min-height: 32px;
+    -webkit-user-select: auto !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+#title p {
+    padding: 0;
+    margin: 0;
+    min-height: 32px;
+    line-height: 32px;
+}
+
+.placeholder {
+    position: relative;
 }
 
 .placeholder[placeholder]:after {
@@ -74,3 +90,6 @@ blockquote{
     border-left: 6px solid rgb(180,180,180);
 }
 
+#separatorDiv {
+    margin-right: 10px;
+}

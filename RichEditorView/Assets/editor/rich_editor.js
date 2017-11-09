@@ -26,7 +26,32 @@ window.onload = function() {
     RE.callback("ready");
 };
 
+RE.titleEditor = document.getElementById('title');
+
+RE.separatorDiv = document.getElementById('separatorDiv');
+
 RE.editor = document.getElementById('editor');
+
+RE.titleEditor.addEventListener("keydown", function(e) {
+                                if (e.keyCode == 13) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                RE.focus();
+                                }
+                                });
+
+RE.titleEditor.addEventListener("input", function(e) {
+                                var show = e.target.innerHTML.replace(/^(<p>)(<br>)?<\/p>\s*$/ig, '');
+                                if (show) {
+                                e.target.setAttribute("placeholder", '');
+                                } else {
+                                e.target.setAttribute("placeholder", '请填写标题');
+                                }
+                                });
+
+RE.titleEditor.addEventListener("focus", function(e) {
+                                RE.callback("enableBar");
+                                });
 
 // Not universally supported, but seems to work in iOS 7 and 8
 document.addEventListener("selectionchange", function(e) {
@@ -74,6 +99,7 @@ RE.editor.addEventListener("focus", function(e) {
                            RE.backuprange();
                            RE.enableEditingItems(e);
                            RE.callback("focus");
+                           RE.callback("disableBar");
                            });
 
 RE.editor.addEventListener("blur", function() {
@@ -700,28 +726,37 @@ RE.getCaretYPosition = function() {
 }
 
 RE.removeEditorState = function(type) {
-    for (var state = ['blockquote', 'h3', 'unorderedList'], n = [], i = 0, l = state.length; i < l; i++) {
-        if(state[i] != type) {
-            for (var loop = 0, len = RE.editorState.length; loop < len; loop++) {
-                if(state[i] == RE.editorState[loop]) {
-                    n.push(state[i]);
-                    switch(state[i]) {
-                        case 'blockquote':
-                            RE.setBlockquote();
-                            break;
-                        case 'h3':
-                            RE.setHeading('h3');
-                            break;
-                        case 'unorderedList':
-                            RE.setUnorderedList();
-                            break;
-                    }
-                }
-            }
-        }
+    const states = ['blockquote', 'h3', 'unorderedList']
+    let arithmetic = i => {
+        RE.editorState
+        .filter(item => item == i)
+        .forEach(item => {
+                 switch(item) {
+                 case 'blockquote':
+                 RE.setBlockquote();
+                 break;
+                 case 'h3':
+                 RE.setHeading('h3');
+                 break;
+                 case 'unorderedList':
+                 RE.setUnorderedList();
+                 break;
+                 }
+                 });
     }
+    states
+    .filter(i => i != type)
+    .forEach(i => {arithmetic(i)})
 }
 
 RE.displayTitle = function(display) {
-    
+    if (display) {
+        RE.titleEditor.style.display = '';
+        RE.separatorDiv.style.display = '';
+        RE.titleEditor.focus();
+    } else {
+        RE.titleEditor.style.display = 'none';
+        RE.separatorDiv.style.display = 'none';
+        RE.focus();
+    }
 }
